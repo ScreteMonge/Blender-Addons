@@ -28,7 +28,7 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
         file = open(path)
         data = json.load(file)
         name = Path(path).stem
-        file.close
+        file.close()
         
         use_vertex_colours = data['useVertexColours']
         verts = data['vertices']
