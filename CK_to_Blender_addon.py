@@ -14,13 +14,14 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator
 from pathlib import Path
 
+
 class OT_TestOpenFilebrowser(Operator, ImportHelper):
-    bl_idname = "test.open_filebrowser" 
+    bl_idname = "test.open_filebrowser"
     bl_label = "Open Json File"
-    
-    filter_glob: StringProperty(default='*.json', options={'HIDDEN'} )
-    scale_down: BoolProperty( name='Scale Down', description='Scale the model down by 128', default=True, )
-    
+
+    filter_glob: StringProperty(default='*.json', options={'HIDDEN'})
+    scale_down: BoolProperty(name='Scale Down', description='Scale the model down by 128', default=True, )
+
     def execute(self, context):
 
         filename, extension = os.path.splitext(self.filepath)
@@ -29,7 +30,7 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
         data = json.load(file)
         name = Path(path).stem
         file.close()
-        
+
         use_vertex_colours = data['useVertexColours']
         verts = data['vertices']
         edges = []
@@ -41,7 +42,7 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
         priorities = data['priorities']
         client_ticks = data['clientTicks']
         anim_verts = data['animVertices']
-        
+
         vertices = []
         if self.scale_down:
             for i in range(len(verts)):
@@ -87,14 +88,14 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
         ob = bpy.data.objects.new("Object", me)
         bpy.context.collection.objects.link(ob)
         ob.name = name
-        
+
         mats = []
-        
+
         fPrio = []
         for f in priorities:
             if f not in fPrio:
                 fPrio.append(f)
-        
+
         has_priorities = False
         if bpy.app.version < (4, 00, 0) and len(fPrio) > 1:
             has_priorities = True
@@ -107,7 +108,7 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
             max = len(fPrio) - 1
             for f in range(len(priorities)):
                 priorities[f] = max - priorities[f]
-            
+
             for f in range(len(fPrio)):
                 ob.face_maps.new(name=str(max - f))
 
@@ -139,7 +140,7 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
             vertex_shader.location = (-200, 300)
             links = mat.node_tree.links
             links.new(vertex_shader.outputs[0], principled.inputs[0])
-            
+
         else:
             for f in range(len(face_colours)):
                 c = face_colours[f]
@@ -152,9 +153,9 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
                 mat.use_nodes = True
                 ob.data.materials.append(mat)
                 mats.append(mat)
-                
+
                 rgb = colorsys.hls_to_rgb(h, l, s)
-                
+
                 principled = mat.node_tree.nodes["Principled BSDF"]
                 principled.inputs["Base Color"].default_value = (rgb[0], rgb[2], rgb[1], 1)
                 principled.inputs["Alpha"].default_value = a
@@ -166,7 +167,7 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
             for f in range(len(face_colour_index)):
                 index = face_colour_index[f]
                 ob.data.polygons[f].material_index = index
-            
+
         if has_priorities:
             for f in range(len(faces)):
                 p = priorities[f]
@@ -184,32 +185,36 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
                 v.co.x = vert_series[i][0]
                 v.co.y = vert_series[i][1]
                 v.co.z = vert_series[i][2]
-                v.keyframe_insert("co", frame = client_tick)
+                v.keyframe_insert("co", frame=client_tick)
 
         for obj in bpy.data.objects:
             obj.select_set(False)
-        
+
         ob.select_set(True)
 
         return {'FINISHED'}
-    
+
+
 addon_keymaps = []
 
-def register(): 
-    bpy.utils.register_class(OT_TestOpenFilebrowser) 
+
+def register():
+    bpy.utils.register_class(OT_TestOpenFilebrowser)
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
         kmi = km.keymap_items.new(OT_TestOpenFilebrowser.bl_idname, 'I', 'PRESS', ctrl=True, shift=True)
         addon_keymaps.append((km, kmi))
-    
-def unregister(): 
+
+
+def unregister():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
-    bpy.utils.unregister_class(OT_TestOpenFilebrowser) 
-    
-if __name__ == "__main__": 
+    bpy.utils.unregister_class(OT_TestOpenFilebrowser)
+
+
+if __name__ == "__main__":
     register()
     bpy.ops.test.open_filebrowser('INVOKE_DEFAULT')

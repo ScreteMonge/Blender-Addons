@@ -11,8 +11,10 @@ import bmesh
 import colorsys
 import codecs
 
+
 class ModelDictionary():
-    def __init__(self, useVertexColours, vertices, faces, vertexColours, vertexColourIndex, faceColours, faceColourIndex, priorities, clientTicks, animFrames, animVertices):
+    def __init__(self, useVertexColours, vertices, faces, vertexColours, vertexColourIndex, faceColours,
+                 faceColourIndex, priorities, clientTicks, animFrames, animVertices):
         self.useVertexColours = useVertexColours
         self.vertices = vertices
         self.faces = faces
@@ -25,9 +27,11 @@ class ModelDictionary():
         self.animFrames = animFrames
         self.animVertices = animVertices
 
+
 class Encoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
+
 
 def write_some_data(context, filepath):
     f = open(filepath, 'w', encoding='utf-8')
@@ -35,9 +39,11 @@ def write_some_data(context, filepath):
     f.close()
     return {'FINISHED'}
 
+
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
+
 
 class ExportSomeData(Operator, ExportHelper):
     bl_idname = "export_test.some_data"
@@ -49,22 +55,22 @@ class ExportSomeData(Operator, ExportHelper):
         maxlen=255,
     )
 
-    scale_up: BoolProperty( 
-        name='Scale Up', 
-        description='Scale the model up by 128', 
-        default=True, 
+    scale_up: BoolProperty(
+        name='Scale Up',
+        description='Scale the model up by 128',
+        default=True,
     )
 
-    vertex_colours: BoolProperty( 
-        name='Vertex Colours', 
-        description='Export with Vertex Colours instead of Face Colours', 
-        default=False, 
+    vertex_colours: BoolProperty(
+        name='Vertex Colours',
+        description='Export with Vertex Colours instead of Face Colours',
+        default=False,
     )
 
     def execute(self, context):
         mode = bpy.context.active_object.mode
         if mode != 'OBJECT':
-            bpy.ops.object.mode_set(mode = 'OBJECT')
+            bpy.ops.object.mode_set(mode='OBJECT')
 
         ob = bpy.context.active_object
         md = ModelDictionary(self.vertex_colours, [], [], [], [], [], [], [], [], [], [])
@@ -76,14 +82,14 @@ class ExportSomeData(Operator, ExportHelper):
             for v in bm.verts:
                 x = int(v.co[0] * 128)
                 y = int(v.co[1] * 128)
-                z = int(-1 * v.co[2] * 128)	
+                z = int(-1 * v.co[2] * 128)
                 list = [x, z, y]
                 md.vertices.append(list)
         else:
             for v in bm.verts:
                 x = int(v.co[0])
                 y = int(v.co[1])
-                z = int(-1 * v.co[2])	
+                z = int(-1 * v.co[2])
                 list = [x, z, y]
                 md.vertices.append(list)
 
@@ -94,7 +100,7 @@ class ExportSomeData(Operator, ExportHelper):
             f3 = v_list[2].index
             it_list = [f1, f2, f3]
             md.faces.append(it_list)
-        
+
         has_vertex_colours = len(me.vertex_colors) > 0
         if self.vertex_colours and has_vertex_colours:
             color_layer = me.vertex_colors[0]
@@ -120,13 +126,13 @@ class ExportSomeData(Operator, ExportHelper):
 
                 if already_contains:
                     continue
-                
+
                 converted_colours.append(vert_col)
                 colorHLS = colorsys.rgb_to_hls(vert_col[0], vert_col[2], vert_col[1])
                 colorHLS_list = (colorHLS[0], colorHLS[1], colorHLS[2], vert_col[3])
                 md.vertexColours.append(colorHLS_list)
                 md.vertexColourIndex.append(len(md.vertexColours) - 1)
-            
+
         else:
             for slot in ob.material_slots:
                 mat = slot.material
@@ -162,14 +168,17 @@ class ExportSomeData(Operator, ExportHelper):
         else:
             for f in bm.faces:
                 md.priorities.append(0)
-        
-        dump = json.dumps(md, separators=(',',':'), cls=Encoder)
+
+        dump = json.dumps(md, separators=(',', ':'), cls=Encoder)
         return write_some_data(dump, self.filepath)
+
 
 def menu_func(self, context):
     self.layout.operator(ExportSomeData.bl_idname)
 
+
 addon_keymaps = []
+
 
 def register():
     bpy.utils.register_class(ExportSomeData)
@@ -180,11 +189,13 @@ def register():
         kmi = km.keymap_items.new(ExportSomeData.bl_idname, 'E', 'PRESS', ctrl=True, shift=True)
         addon_keymaps.append((km, kmi))
 
+
 def unregister():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
     bpy.utils.unregister_class(ExportSomeData)
+
 
 if __name__ == "__main__":
     register()
