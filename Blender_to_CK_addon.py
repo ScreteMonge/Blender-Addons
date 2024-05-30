@@ -14,7 +14,7 @@ import codecs
 
 class ModelDictionary():
     def __init__(self, useVertexColours, vertices, faces, vertexColours, vertexColourIndex, faceColours,
-                 faceColourIndex, priorities, clientTicks, animFrames, animVertices):
+                 faceColourIndex, priorities, clientTicks, animVertices):
         self.useVertexColours = useVertexColours
         self.vertices = vertices
         self.faces = faces
@@ -24,7 +24,6 @@ class ModelDictionary():
         self.faceColourIndex = faceColourIndex
         self.priorities = priorities
         self.clientTicks = clientTicks
-        self.animFrames = animFrames
         self.animVertices = animVertices
 
 
