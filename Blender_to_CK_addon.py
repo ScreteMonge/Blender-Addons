@@ -14,7 +14,7 @@ import codecs
 
 class ModelDictionary():
     def __init__(self, useVertexColours, vertices, faces, vertexColours, vertexColourIndex, faceColours,
-                 faceColourIndex, priorities, clientTicks, animFrames, animVertices):
+                 faceColourIndex, priorities, clientTicks, animVertices):
         self.useVertexColours = useVertexColours
         self.vertices = vertices
         self.faces = faces
@@ -24,7 +24,6 @@ class ModelDictionary():
         self.faceColourIndex = faceColourIndex
         self.priorities = priorities
         self.clientTicks = clientTicks
-        self.animFrames = animFrames
         self.animVertices = animVertices
 
 
@@ -80,12 +79,12 @@ class ExportSomeData(Operator, ExportHelper):
             bpy.ops.object.mode_set(mode='OBJECT')
 
         ob = bpy.context.active_object
-        md = ModelDictionary(self.vertex_colours, [], [], [], [], [], [], [], [], [], [])
+        md = ModelDictionary(self.vertex_colours, [], [], [], [], [], [], [], [], [])
         me = ob.data
         bm = bmesh.new()
         bm.from_mesh(me)
 
-        if (self.scale_up):
+        if self.scale_up:
             for v in bm.verts:
                 x = int(v.co[0] * 128)
                 y = int(v.co[1] * 128)
@@ -135,9 +134,9 @@ class ExportSomeData(Operator, ExportHelper):
                     continue
 
                 converted_colours.append(vert_col)
-                colorHLS = colorsys.rgb_to_hls(vert_col[0], vert_col[2], vert_col[1])
-                colorHLS_list = (colorHLS[0], colorHLS[1], colorHLS[2], vert_col[3])
-                md.vertexColours.append(colorHLS_list)
+                color_hls = colorsys.rgb_to_hls(vert_col[0], vert_col[2], vert_col[1])
+                color_hls_list = (color_hls[0], color_hls[1], color_hls[2], vert_col[3])
+                md.vertexColours.append(color_hls_list)
                 md.vertexColourIndex.append(len(md.vertexColours) - 1)
 
         else:
@@ -145,10 +144,10 @@ class ExportSomeData(Operator, ExportHelper):
                 mat = slot.material
                 principled = mat.node_tree.nodes["Principled BSDF"].inputs
                 color = principled["Base Color"].default_value
-                colorHLS = colorsys.rgb_to_hls(color[0], color[2], color[1])
+                color_hls = colorsys.rgb_to_hls(color[0], color[2], color[1])
                 alpha = principled["Alpha"].default_value
-                colorHLS_list = [colorHLS[0], colorHLS[1], colorHLS[2], alpha]
-                md.faceColours.append(colorHLS_list)
+                color_hls_list = [color_hls[0], color_hls[1], color_hls[2], alpha]
+                md.faceColours.append(color_hls_list)
 
             for f in bm.faces:
                 md.faceColourIndex.append(f.material_index)
