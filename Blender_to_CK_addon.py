@@ -67,6 +67,13 @@ class ExportSomeData(Operator, ExportHelper):
         default=False,
     )
 
+    face_priorities: BoolProperty(
+        name='Face Priorities',
+        description='''Export with Face Priorities to match Runescape\'s face priority system
+                    Will not work in Blender 4.0 and above''',
+        default=False,
+    )
+
     def execute(self, context):
         mode = bpy.context.active_object.mode
         if mode != 'OBJECT':
@@ -146,7 +153,7 @@ class ExportSomeData(Operator, ExportHelper):
             for f in bm.faces:
                 md.faceColourIndex.append(f.material_index)
 
-        if bpy.app.version < (4, 00, 0):
+        if bpy.app.version < (4, 00, 0) and self.face_priorities:
             fm = bm.faces.layers.face_map.verify()
             max = 0
             for f in bm.faces:
