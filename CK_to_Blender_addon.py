@@ -1,7 +1,11 @@
 bl_info = {
     "name": "Runescape Import",
+    "author": "ScreteMonge",
+    "doc_url": "https://youtu.be/E_9c-LwDRRY",
+    "tracker_url": "https://github.com/ScreteMonge/Blender-Addons/issues",
     "blender": (3, 00, 0),
     "category": "Object",
+    "description": "Allows for import of user exported json files from the Creator's Kit. CTRL + SHIFT + I.",
 }
 
 import bpy
