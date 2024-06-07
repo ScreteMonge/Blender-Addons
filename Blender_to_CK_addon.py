@@ -66,6 +66,12 @@ class ExportSomeData(Operator, ExportHelper):
         default=False,
     )
 
+    face_maps: BoolProperty(
+        name='Export Priorities',
+        description='Export with Runescape-like priorities based on Face Map order',
+        default=False,
+    )
+
     def execute(self, context):
         mode = bpy.context.active_object.mode
         if mode != 'OBJECT':
@@ -145,7 +151,7 @@ class ExportSomeData(Operator, ExportHelper):
             for f in bm.faces:
                 md.faceColourIndex.append(f.material_index)
 
-        if bpy.app.version < (4, 00, 0):
+        if bpy.app.version < (4, 00, 0) and not self.face_maps:
             fm = bm.faces.layers.face_map.verify()
             max = 0
             for f in bm.faces:
