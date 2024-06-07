@@ -1,5 +1,8 @@
 bl_info = {
     "name": "Runescape Export",
+    "author": "ScreteMonge",
+    "doc_url": "https://youtu.be/E_9c-LwDRRY",
+    "tracker_url": "https://github.com/ScreteMonge/Blender-Addons/issues",
     "blender": (3, 00, 0),
     "category": "Object",
 }
@@ -66,9 +69,10 @@ class ExportSomeData(Operator, ExportHelper):
         default=False,
     )
 
-    face_maps: BoolProperty(
-        name='Export Priorities',
-        description='Export with Runescape-like priorities based on Face Map order',
+    face_priorities: BoolProperty(
+        name='Face Priorities',
+        description='''Export with Face Priorities to match Runescape\'s face priority system
+                    Will not work in Blender 4.0 and above''',
         default=False,
     )
 
@@ -151,7 +155,7 @@ class ExportSomeData(Operator, ExportHelper):
             for f in bm.faces:
                 md.faceColourIndex.append(f.material_index)
 
-        if bpy.app.version < (4, 00, 0) and not self.face_maps:
+        if bpy.app.version < (4, 00, 0) and self.face_priorities:
             fm = bm.faces.layers.face_map.verify()
             max = 0
             for f in bm.faces:
