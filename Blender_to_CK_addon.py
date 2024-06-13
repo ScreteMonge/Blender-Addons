@@ -1,6 +1,7 @@
 bl_info = {
     "name": "Runescape Export",
     "author": "ScreteMonge",
+    "version": (1, 0),
     "doc_url": "https://youtu.be/E_9c-LwDRRY",
     "tracker_url": "https://github.com/ScreteMonge/Blender-Addons/issues",
     "blender": (3, 00, 0),
