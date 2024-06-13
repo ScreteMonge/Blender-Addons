@@ -1,6 +1,7 @@
 bl_info = {
     "name": "Runescape Import",
     "author": "ScreteMonge",
+    "version": (1, 1),
     "doc_url": "https://youtu.be/E_9c-LwDRRY",
     "tracker_url": "https://github.com/ScreteMonge/Blender-Addons/issues",
     "blender": (3, 00, 0),
@@ -190,6 +191,8 @@ class OT_TestOpenFilebrowser(Operator, ImportHelper):
                 v.co.y = vert_series[i][1]
                 v.co.z = vert_series[i][2]
                 v.keyframe_insert("co", frame=client_tick)
+
+        me.validate()
 
         for obj in bpy.data.objects:
             obj.select_set(False)
