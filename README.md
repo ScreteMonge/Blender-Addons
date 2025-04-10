@@ -11,8 +11,6 @@ To use the importer, use the hotkey Ctrl + Shift + I. Select the .json file you 
 
 # Blender to CK Export
 
-# CK to Blender Import
-
 To export Blender files from Blender to Creator's Kit:
 
 1) Download the most recent Blender_to_CK_addon.py file
